@@ -7,8 +7,8 @@ def create_cliente(nombre_cliente, telefono, apellido_cliente):
     if connection is not None:
         cursor = connection.cursor()
         try:
-            query = "INSERT INTO Cliente (nombre_Cliente, telefono, apellido_cliente) VALUES (%s, %s, %s)"
-            cursor.execute(query, (nombre_cliente, telefono, apellido_cliente))
+            query = "INSERT INTO Cliente (nombre_Cliente,apellido_cliente,telefono) VALUES (%s, %s, %s)"
+            cursor.execute(query, (nombre_cliente,apellido_cliente,telefono))
             connection.commit()
             print("Cliente creado con éxito.")
         except Error as e:

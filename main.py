@@ -4,8 +4,9 @@ from models.TransferenciaPedido import transferir_pedido
 from models.Empleado import read_empleados, create_empleado, update_empleado, delete_empleado
 from models.Sucursal import read_sucursal, create_sucursal, update_sucursal, delete_sucursal
 
-def insertar_datos_ejemplo():
+def insertar_datos_ejemplo1():
     # Insertar 5 empleados de ejemplo
+ 
     empleados_ejemplo = [
         {"nombre": "Juan Perez", "cargo": "Gerente", "username": "jperez","contraseña":"jperez+1234"},
         {"nombre": "Ana Gómez", "cargo": "Gerente", "username": "agomez","contraseña":"agomez+1234"},
@@ -18,47 +19,52 @@ def insertar_datos_ejemplo():
     
     # Insertar 5 clientes de ejemplo
     clientes_ejemplo = [
-        {"nombre": "Pedro López", "telefono": "123456789", "direccion": "Av. Principal 123"},
-        {"nombre": "Maria Castillo", "telefono": "987654321", "direccion": "Calle Secundaria 456"},
-        {"nombre": "Luis Ramírez", "telefono": "112233445", "direccion": "Paseo del Sol 789"},
-        {"nombre": "Sofía Torres", "telefono": "667788990", "direccion": "Av. Central 101"},
-        {"nombre": "Jorge Sánchez", "telefono": "223344556", "direccion": "Calle del Río 202"},
+        {"nombre": "Pedro ", "telefono": "123456789", "apellido": "López"},
+        {"nombre": "Maria ", "telefono": "987654321", "apellido": "Castillo"},
+        {"nombre": "Luis ", "telefono": "112233445", "apellido": "Ramírez"},
+        {"nombre": "Sofía ", "telefono": "667788990", "apellido": "Torres"},
+        {"nombre": "Jorge ", "telefono": "223344556", "apellido": "Sánchez"},
     ]
     for cliente in clientes_ejemplo:
-        create_cliente(cliente["nombre"], cliente["telefono"], cliente["direccion"])
-    
-    # Insertar 5 pedidos de ejemplo
-    pedidos_ejemplo = [
-        {"id_cliente": 1, "producto": "Laptop", "cantidad": 1, "total": 1500},
-        {"id_cliente": 2, "producto": "Teléfono", "cantidad": 2, "total": 1000},
-        {"id_cliente": 3, "producto": "Tablet", "cantidad": 1, "total": 600},
-        {"id_cliente": 4, "producto": "Monitor", "cantidad": 1, "total": 400},
-        {"id_cliente": 5, "producto": "Teclado", "cantidad": 3, "total": 150},
-    ]
-    for pedido in pedidos_ejemplo:
-        create_pedido(pedido["id_cliente"], pedido["producto"], pedido["cantidad"], pedido["total"])
-    
-    # Insertar 5 sucursales de ejemplo
+        create_cliente(cliente["nombre"], cliente["apellido"], cliente ["telefono"])
+   
+ # Insertar 5 sucursales de ejemplo
     sucursales_ejemplo = [
-        {"nombre": "Sucursal Centro", "direccion": "Calle Mayor 123", "telefono": "333333333"},
-        {"nombre": "Sucursal Norte", "direccion": "Av. del Norte 456", "telefono": "444444444"},
-        {"nombre": "Sucursal Sur", "direccion": "Calle del Sur 789", "telefono": "555555555"},
-        {"nombre": "Sucursal Este", "direccion": "Calle Este 101", "telefono": "666666666"},
-        {"nombre": "Sucursal Oeste", "direccion": "Calle Oeste 202", "telefono": "777777777"},
+            {"nombre_Sucursal": "Sucursal Centro", "direccion": "Calle Mayor 123", "horario_apertura": "08:00", "horario_cierre": "18:00"},
+            {"nombre_Sucursal": "Sucursal Norte", "direccion": "Avenida del Sol 456", "horario_apertura": "09:00", "horario_cierre": "17:00"},
+            {"nombre_Sucursal": "Sucursal Sur", "direccion": "Calle Luna 789", "horario_apertura": "10:00", "horario_cierre": "19:00"},
+            {"nombre_Sucursal": "Sucursal Este", "direccion": "Boulevard de la Paz 101", "horario_apertura": "07:30", "horario_cierre": "16:30"},
+            {"nombre_Sucursal": "Sucursal Oeste", "direccion": "Calle de la Esperanza 202", "horario_apertura": "08:30", "horario_cierre": "20:00"}
     ]
     for sucursal in sucursales_ejemplo:
-        create_sucursal(sucursal["nombre"], sucursal["direccion"], sucursal["telefono"])
+        create_sucursal(sucursal["nombre_Sucursal"], sucursal["direccion"], sucursal["horario_apertura"], sucursal["horario_cierre"])
     
+def insertar_datos_ejemplo2():
+       # Insertar 5 pedidos de ejemplo
+         pedidos_ejemplo = [
+        {"direccion_entrega": "av san juan","estado": "En preparación","fecha estimada entrega": "2025-03-12","idSOrigen":1,"idCliente":1,"created_by":1},
+        {"direccion_entrega": "calle 45, sector 3", "estado": "En preparación", "fecha estimada entrega": "2025-03-15",  "idSOrigen": 2, "idCliente": 2,"created_by":2},
+        {"direccion_entrega": "av principal, bloque 7", "estado": "En preparación", "fecha estimada entrega": "2025-03-20", "idSOrigen": 3, "idCliente": 3,"created_by":3},
+         {"direccion_entrega": "av central, zona 5", "estado": "En preparación", "fecha estimada entrega": "2024-05-28", "idSOrigen": 5, "idCliente": 4,"created_by":4},
+        {"direccion_entrega": "av central, zona 5", "estado": "En preparación", "fecha estimada entrega": "2024-05-28", "idSOrigen": 5, "idCliente": 5,"created_by":5}
+         ]
+         for pedido in pedidos_ejemplo:
+             create_pedido(pedido["direccion_entrega"], pedido["estado"], pedido["fecha estimada entrega"],pedido["idSOrigen"],pedido["idCliente"],pedido["created_by"])
     # Insertar 5 transferencias de pedido de ejemplo
-    transferencias_ejemplo = [
+         transferencias_ejemplo = [
         {"id_pedido": 1, "id_sucursal_origen": 1, "id_sucursal_destino": 2},
         {"id_pedido": 2, "id_sucursal_origen": 2, "id_sucursal_destino": 3},
         {"id_pedido": 3, "id_sucursal_origen": 3, "id_sucursal_destino": 4},
         {"id_pedido": 4, "id_sucursal_origen": 4, "id_sucursal_destino": 5},
         {"id_pedido": 5, "id_sucursal_origen": 5, "id_sucursal_destino": 1},
     ]
-    for transferencia in transferencias_ejemplo:
-        transferir_pedido(transferencia["id_pedido"], transferencia["id_sucursal_origen"], transferencia["id_sucursal_destino"])
+         for transferencia in transferencias_ejemplo:
+                transferir_pedido(transferencia["id_pedido"], transferencia["id_sucursal_origen"], transferencia["id_sucursal_destino"])
+ # aolo insertar una vez sino bug
+
+
+insertar_datos_ejemplo1()
+insertar_datos_ejemplo2()
 
 def show_menu():
     """Muestra el menú de opciones."""

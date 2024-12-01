@@ -1,4 +1,4 @@
-from database.conection import create_connection, close_connection
+from database.conection import create_connection
 from mysql.connector import Error
 def create_sucursal(nombre, direccion, horario_apertura, horario_cierre):
     connection = create_connection()

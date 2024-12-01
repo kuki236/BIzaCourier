@@ -1,12 +1,14 @@
 from database.conection import create_connection
 from mysql.connector import Error
+from datetime import datetime
 
-def create_pedido(direccion_entrega, estado, fecha_estimadada_entrega, fecha_creacion, id_sucursal_origen, id_cliente, created_by):
+def create_pedido(direccion_entrega, estado, fecha_estimadada_entrega, id_sucursal_origen, id_cliente, created_by):
     """Crea un nuevo pedido en la base de datos con validación de claves foráneas."""
     connection = create_connection()
     if connection is not None:
         cursor = connection.cursor()
         try:
+            fecha_creacion = datetime.now()
             # Verificar que la sucursal y el cliente existen
             cursor.execute("SELECT idSucursal FROM Sucursal WHERE idSucursal = %s", (id_sucursal_origen,))
             if not cursor.fetchone():
@@ -46,7 +48,7 @@ def read_pedidos():
                 p.fecha_estimadada_entrega,
                 p.fecha_creacion,
                 p.idSucursalOrigen,
-                s.nombre AS nombre_sucursal,
+                s.nombre_Sucursal AS nombre_sucursal,
                 p.idCliente,
                 c.nombre_Cliente AS nombre_cliente,
                 p.created_by
