@@ -83,3 +83,38 @@ def delete_pedido(idPedido):
         if connection.is_connected():
             cursor.close()
             connection.close()
+# Buscar un pedido por ID
+def buscar_pedido_por_id(idPedido):
+    try:
+        connection = create_connection()
+        query = "SELECT * FROM bizaCourier.Pedido WHERE idPedido = %s"
+        cursor = connection.cursor()
+        cursor.execute(query, (idPedido,))
+        result = cursor.fetchone()
+        if result:
+            print(f"Pedido encontrado: {result}")
+        else:
+            print(f"No se encontró el pedido con ID: {idPedido}")
+    except Error as e:
+        print(f"Error al buscar el pedido: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+def buscar_pedido_por_nombre(nombre):
+    try:
+        connection = create_connection()
+        query = "SELECT * FROM bizaCourier.Pedido WHERE nombre = %s"
+        cursor = connection.cursor()
+        cursor.execute(query, (nombre,))
+        result = cursor.fetchone()
+        if result:
+            print(f"Pedido encontrado: {result}")
+        else:
+            print(f"No se encontró ningún pedido con el nombre: {nombre}")
+    except Error as e:
+        print(f"Error al buscar el pedido: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()

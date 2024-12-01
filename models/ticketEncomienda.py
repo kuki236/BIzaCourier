@@ -1,17 +1,84 @@
 from database.conection import create_connection
 from mysql.connector import Error
-
-from database.conection import create_connection
-from mysql.connector import Error
 from datetime import datetime  
+import requests
+from urllib.parse import quote_plus
+from datetime import datetime
+from mysql.connector import Error
+from math import radians, cos, sin, sqrt, atan2
 
-# Create (Insert)
-def create_ticket_encomienda(estado_transferencia="Creado", idSucursalOrigen=None, idSucursalDestino=None, idPedido=None, fecha_recepcion=None, fecha_estimada_entrega=None):
+# Función para obtener latitud y longitud de una dirección
+def obtener_latitud_longitud(direccion):
+    direccion_codificada = quote_plus(direccion)
+    url = f'https://nominatim.openstreetmap.org/search?q={direccion_codificada}&format=jsonv2'
+    headers = {
+        'User-Agent': 'BizaCourier/1.0 (sebasandree729@gmail.com)'
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        try:
+            data = response.json()
+            if data:
+                return float(data[0].get('lat')), float(data[0].get('lon'))
+            else:
+                return None, None
+        except ValueError:
+            return None, None
+    else:
+        return None, None
+
+# Calcular distancia entre dos coordenadas geográficas (Haversine)
+def calcular_distancia(coord1, coord2):
+    R = 6371.0  # Radio de la Tierra en kilómetros
+    lat1, lon1 = radians(coord1[0]), radians(coord1[1])
+    lat2, lon2 = radians(coord2[0]), radians(coord2[1])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c
+
+# Crear ticket encomienda con cálculo del idSucursalDestino
+def create_ticket_encomienda(estado_transferencia="Creado", idSucursalOrigen=None, idPedido=None, fecha_recepcion=None, fecha_estimada_entrega=None):
     try:
         conn = create_connection()
         if conn.is_connected():
             cursor = conn.cursor()
-            # Obtener la fecha y hora actual
+            
+            # Obtener direccion_entrega del pedido
+            cursor.execute("SELECT direccion_entrega FROM bizaCourier.Pedido WHERE idPedido = %s", (idPedido,))
+            direccion_entrega = cursor.fetchone()
+            if not direccion_entrega:
+                print(f"No se encontró el pedido con ID: {idPedido}")
+                return
+            direccion_entrega = direccion_entrega[0]
+            
+            # Obtener latitud y longitud de la direccion_entrega
+            coord_entrega = obtener_latitud_longitud(direccion_entrega)
+            if not coord_entrega[0]:
+                print("No se pudo obtener las coordenadas de la dirección de entrega.")
+                return
+            
+            # Obtener todas las sucursales y sus direcciones
+            cursor.execute("SELECT idSucursal, direccion FROM Sucursal")
+            sucursales = cursor.fetchall()
+            if not sucursales:
+                print("No se encontraron sucursales registradas.")
+                return
+            
+            # Calcular distancia a cada sucursal
+            distancias = []
+            for sucursal in sucursales:
+                id_sucursal, direccion_sucursal = sucursal
+                coord_sucursal = obtener_latitud_longitud(direccion_sucursal)
+                if coord_sucursal[0]:
+                    distancia = calcular_distancia(coord_entrega, coord_sucursal)
+                    distancias.append((distancia, id_sucursal))
+            
+            # Obtener la sucursal más cercana
+            idSucursalDestino = min(distancias, key=lambda x: x[0])[1]
+            
+            # Insertar el ticket encomienda
             fecha_inicio = datetime.now()
             query = """
             INSERT INTO bizaCourier.TicketEncomienda (estado_transferencia, fecha_inicio, fecha_recepcion, fecha_estimada_entrega, idSucursalOrigen, idSucursalDestino, idPedido)
@@ -19,7 +86,7 @@ def create_ticket_encomienda(estado_transferencia="Creado", idSucursalOrigen=Non
             """
             cursor.execute(query, (estado_transferencia, fecha_inicio, fecha_recepcion, fecha_estimada_entrega, idSucursalOrigen, idSucursalDestino, idPedido))
             conn.commit()
-            print("TicketEncomienda creado exitosamente")
+            print("TicketEncomienda creado exitosamente.")
     except Error as e:
         print(f"Error al insertar en la base de datos: {e}")
     finally:
@@ -114,6 +181,32 @@ def delete_ticket_encomienda(idTicketEncomienda):
             print("TicketEncomienda eliminado exitosamente")
     except Error as e:
         print(f"Error al eliminar de la base de datos: {e}")
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+def cambiar_estado_transferencia(idTicketEncomienda, nuevo_estado):
+    """
+    Cambia el estado de transferencia de un TicketEncomienda.
+    
+    Args:
+        idTicketEncomienda (int): ID del TicketEncomienda a actualizar.
+        nuevo_estado (str): Nuevo estado de transferencia.
+    """
+    try:
+        conn = create_connection()
+        if conn.is_connected():
+            cursor = conn.cursor()
+            query = """
+            UPDATE bizaCourier.TicketEncomienda
+            SET estado_transferencia = %s
+            WHERE idTicketEncomienda = %s;
+            """
+            cursor.execute(query, (nuevo_estado, idTicketEncomienda))
+            conn.commit()
+            print(f"Estado de transferencia actualizado exitosamente a '{nuevo_estado}' para TicketEncomienda ID: {idTicketEncomienda}")
+    except Error as e:
+        print(f"Error al actualizar el estado de transferencia: {e}")
     finally:
         if conn.is_connected():
             cursor.close()

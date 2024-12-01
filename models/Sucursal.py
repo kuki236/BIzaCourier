@@ -58,3 +58,20 @@ def delete_sucursal(id_sucursal):
     finally:
         cursor.close()  
         conn.close()   
+        # Buscar una sucursal por ID
+def buscar_sucursal_por_id(id_sucursal):
+    query = "SELECT * FROM Sucursal WHERE idSucursal = %s"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (id_sucursal,))
+        result = cursor.fetchone()
+        if result:
+            print(f"Sucursal encontrada: {result}")
+        else:
+            print(f"No se encontró la sucursal con ID: {id_sucursal}")
+    except Error as e:
+        print(f"Error al buscar la sucursal: {e}")
+    finally:
+        cursor.close()  
+        conn.close()
