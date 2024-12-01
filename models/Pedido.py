@@ -1,106 +1,85 @@
 from database.conection import create_connection
 from mysql.connector import Error
-from datetime import datetime
+import random
+import string
+def generate_random_name(length=12):
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
 
-def create_pedido(direccion_entrega, estado, fecha_estimadada_entrega, id_sucursal_origen, id_cliente, created_by):
-    """Crea un nuevo pedido en la base de datos con validación de claves foráneas."""
-    connection = create_connection()
-    if connection is not None:
+# Crear un pedido
+def create_pedido(idPedido, direccion_entrega, codigo_postal_entrega, idCliente, created_by):
+    try:
+        connection = create_connection()
+        nombre = generate_random_name()  # Generar nombre aleatorio
+        query = """
+        INSERT INTO bizaCourier.Pedido (idPedido, nombre, direccion_entrega, codigo_postal_entrega, idCliente, created_by)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        values = (idPedido, nombre, direccion_entrega, codigo_postal_entrega, idCliente, created_by)
         cursor = connection.cursor()
-        try:
-            fecha_creacion = datetime.now()
-            # Verificar que la sucursal y el cliente existen
-            cursor.execute("SELECT idSucursal FROM Sucursal WHERE idSucursal = %s", (id_sucursal_origen,))
-            if not cursor.fetchone():
-                print("Error: La sucursal especificada no existe.")
-                return
-
-            cursor.execute("SELECT idCliente FROM Cliente WHERE idCliente = %s", (id_cliente,))
-            if not cursor.fetchone():
-                print("Error: El cliente especificado no existe.")
-                return
-
-            # Insertar el pedido
-            query = """
-            INSERT INTO Pedido (direccion_entrega, estado, fecha_estimadada_entrega, fecha_creacion, idSucursalOrigen, idCliente, created_by)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(query, (direccion_entrega, estado, fecha_estimadada_entrega, fecha_creacion, id_sucursal_origen, id_cliente, created_by))
-            connection.commit()
-            print("Pedido creado con éxito.")
-        except Error as e:
-            print("Error al crear el pedido:", e)
-        finally:
+        cursor.execute(query, values)
+        connection.commit()
+        print(f"Pedido creado correctamente con nombre: {nombre}")
+    except Error as e:
+        print(f"Error al crear el pedido: {e}")
+    finally:
+        if connection.is_connected():
             cursor.close()
             connection.close()
+
+# Leer todos los pedidos
 def read_pedidos():
-    """Obtiene todos los pedidos con los nombres de la sucursal y del cliente."""
-    connection = create_connection()
-    if connection is not None:
+    try:
+        connection = create_connection()
+        query = "SELECT * FROM bizaCourier.Pedido"
         cursor = connection.cursor()
-        try:
-            # Usamos LEFT JOIN para obtener los nombres de la sucursal y del cliente
-            query = """
-            SELECT 
-                p.idPedido,
-                p.direccion_entrega,
-                p.estado,
-                p.fecha_estimadada_entrega,
-                p.fecha_creacion,
-                p.idSucursalOrigen,
-                s.nombre_Sucursal AS nombre_sucursal,
-                p.idCliente,
-                c.nombre_Cliente AS nombre_cliente,
-                p.created_by
-            FROM 
-                Pedido p
-            LEFT JOIN 
-                Sucursal s ON p.idSucursalOrigen = s.idSucursal
-            LEFT JOIN 
-                Cliente c ON p.idCliente = c.idCliente
-            """
-            cursor.execute(query)
-            result = cursor.fetchall()
-            for row in result:
-                print(row)
-        except Error as e:
-            print("Error al leer los pedidos:", e)
-        finally:
+        cursor.execute(query)
+        results = cursor.fetchall()
+        for row in results:
+            print(row)
+    except Error as e:
+        print(f"Error al leer los pedidos: {e}")
+    finally:
+        if connection.is_connected():
             cursor.close()
             connection.close()
 
-def update_pedido(id_pedido, direccion_entrega, estado, fecha_estimadada_entrega, fecha_creacion, id_sucursal_origen, id_cliente, created_by):
-    """Actualiza la información de un pedido existente."""
-    connection = create_connection()
-    if connection is not None:
+# Actualizar un pedido
+def update_pedido(idPedido, direccion_entrega=None, codigo_postal_entrega=None):
+    try:
+        connection = create_connection()
+        query = "UPDATE bizaCourier.Pedido SET "
+        values = []
+        if direccion_entrega:
+            query += "direccion_entrega = %s, "
+            values.append(direccion_entrega)
+        if codigo_postal_entrega:
+            query += "codigo_postal_entrega = %s, "
+            values.append(codigo_postal_entrega)
+        query = query.rstrip(", ") + " WHERE idPedido = %s"
+        values.append(idPedido)
         cursor = connection.cursor()
-        try:
-            query = """
-            UPDATE Pedido
-            SET direccion_entrega = %s, estado = %s, fecha_estimadada_entrega = %s, fecha_creacion = %s, idSucursalOrigen = %s, idCliente = %s, created_by = %s
-            WHERE idPedido = %s
-            """
-            cursor.execute(query, (direccion_entrega, estado, fecha_estimadada_entrega, fecha_creacion, id_sucursal_origen, id_cliente, created_by, id_pedido))
-            connection.commit()
-            print("Pedido actualizado con éxito.")
-        except Error as e:
-            print("Error al actualizar el pedido:", e)
-        finally:
+        cursor.execute(query, tuple(values))
+        connection.commit()
+        print(f"Pedido {idPedido} actualizado correctamente.")
+    except Error as e:
+        print(f"Error al actualizar el pedido: {e}")
+    finally:
+        if connection.is_connected():
             cursor.close()
             connection.close()
 
-def delete_pedido(id_pedido):
-    """Elimina un pedido de la base de datos."""
-    connection = create_connection()
-    if connection is not None:
+# Eliminar un pedido
+def delete_pedido(idPedido):
+    try:
+        connection = create_connection()
+        query = "DELETE FROM bizaCourier.Pedido WHERE idPedido = %s"
         cursor = connection.cursor()
-        try:
-            query = "DELETE FROM Pedido WHERE idPedido = %s"
-            cursor.execute(query, (id_pedido,))
-            connection.commit()
-            print("Pedido eliminado con éxito.")
-        except Error as e:
-            print("Error al eliminar el pedido:", e)
-        finally:
+        cursor.execute(query, (idPedido,))
+        connection.commit()
+        print(f"Pedido {idPedido} eliminado correctamente.")
+    except Error as e:
+        print(f"Error al eliminar el pedido: {e}")
+    finally:
+        if connection.is_connected():
             cursor.close()
             connection.close()

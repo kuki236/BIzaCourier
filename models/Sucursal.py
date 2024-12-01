@@ -1,65 +1,60 @@
 from database.conection import create_connection
 from mysql.connector import Error
-def create_sucursal(nombre, direccion, horario_apertura, horario_cierre):
-    connection = create_connection()
-    if connection:
-        try:
-            cursor = connection.cursor()
-            query = """INSERT INTO Sucursal (nombre_Sucursal, direccion, horario_apertura, horario_cierre)
-                       VALUES (%s, %s, %s, %s)"""
-            cursor.execute(query, (nombre, direccion, horario_apertura, horario_cierre))
-            connection.commit()
-            print("Sucursal creada con éxito.")
-        except Error as e:
-            print(f"Error al crear sucursal: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+def create_sucursal(nombre_sucursal, direccion, codigo_postal, horario_apertura, horario_cierre):
+    query = "INSERT INTO Sucursal (nombre_sucursal, direccion, codigo_postal, horario_apertura, horario_cierre) VALUES (%s, %s, %s, %s, %s)"
+    values = (nombre_sucursal, direccion, codigo_postal, horario_apertura, horario_cierre)
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, values)
+        conn.commit()
+        print("Sucursal creada correctamente.")
+    except Error as e:
+        print(f"Error al crear sucursal: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
-def read_sucursal():
-    connection = create_connection()
-    if connection:
-        try:
-            cursor = connection.cursor(dictionary=True)
-            query = "SELECT * FROM Sucursal"
-            cursor.execute(query)
-            sucursales = cursor.fetchall()
-            for sucursal in sucursales:
-                print(sucursal)
-        except Error as e:
-            print(f"Error al leer sucursales: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+def read_sucursales():
+    query = "SELECT * FROM Sucursal"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query)
+        sucursales = cursor.fetchall()
+        for sucursal in sucursales:
+            print(sucursal)
+    except Error as e:
+        print(f"Error al leer sucursales: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
-def update_sucursal(id_sucursal, nombre, direccion, horario_apertura, horario_cierre):
-    connection = create_connection()
-    if connection:
-        try:
-            cursor = connection.cursor()
-            query = """UPDATE Sucursal
-                       SET nombre_Sucursal = %s, direccion = %s, horario_apertura = %s, horario_cierre = %s
-                       WHERE idSucursal = %s"""
-            cursor.execute(query, (nombre, direccion, horario_apertura, horario_cierre, id_sucursal))
-            connection.commit()
-            print("Sucursal actualizada con éxito.")
-        except Error as e:
-            print(f"Error al actualizar sucursal: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+def update_sucursal(id_sucursal, nombre_sucursal, direccion, codigo_postal, horario_apertura, horario_cierre):
+    query = "UPDATE Sucursal SET nombre_sucursal = %s, direccion = %s, codigo_postal = %s, horario_apertura = %s, horario_cierre = %s WHERE idSucursal = %s"
+    values = (nombre_sucursal, direccion, codigo_postal, horario_apertura, horario_cierre, id_sucursal)
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, values)
+        conn.commit()  # Asegúrate de guardar los cambios
+        print("Sucursal actualizada correctamente.")
+    except Error as e:
+        print(f"Error al actualizar sucursal: {e}")
+    finally:
+        cursor.close()  # Cierra el cursor
+        conn.close()    # Cierra la conexión
 
 def delete_sucursal(id_sucursal):
-    connection = create_connection()
-    if connection:
-        try:
-            cursor = connection.cursor()
-            query = "DELETE FROM Sucursal WHERE idSucursal = %s"
-            cursor.execute(query, (id_sucursal,))
-            connection.commit()
-            print("Sucursal eliminada con éxito.")
-        except Error as e:
-            print(f"Error al eliminar sucursal: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+    query = "DELETE FROM Sucursal WHERE idSucursal = %s"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (id_sucursal,))
+        conn.commit()
+        print("Sucursal eliminada con éxito.")
+    except Error as e:
+        print(f"Error al eliminar sucursal: {e}")
+    finally:
+        cursor.close()  
+        conn.close()   

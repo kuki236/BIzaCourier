@@ -1,71 +1,65 @@
 from database.conection import create_connection
 from mysql.connector import Error
 
-def create_cliente(nombre_cliente, telefono, apellido_cliente):
-    """Crea un nuevo cliente en la base de datos."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = "INSERT INTO Cliente (nombre_Cliente,apellido_cliente,telefono) VALUES (%s, %s, %s)"
-            cursor.execute(query, (nombre_cliente,apellido_cliente,telefono))
-            connection.commit()
-            print("Cliente creado con éxito.")
-        except Error as e:
-            print("Error al crear el cliente:", e)
-        finally:
-            cursor.close()
-            connection.close()
+# Crear Cliente
+def create_cliente(nombre_cliente, apellido_cliente, telefono):
+    query = "INSERT INTO Cliente (nombre_cliente, apellido_cliente, telefono) VALUES (%s, %s, %s)"
+    values = (nombre_cliente, apellido_cliente, telefono)
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, values)
+        conn.commit()
+        print("Cliente creado correctamente.")
+    except Error as e:
+        print(f"Error al crear cliente: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
+# Leer Clientes
 def read_clientes():
-    """Obtiene todos los clientes de la base de datos."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = "SELECT * FROM Cliente"
-            cursor.execute(query)
-            result = cursor.fetchall()
-            for row in result:
-                print(row)
-        except Error as e:
-            print("Error al leer los clientes:", e)
-        finally:
-            cursor.close()
-            connection.close()
+    query = "SELECT * FROM Cliente"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query)
+        clientes = cursor.fetchall()
+        for cliente in clientes:
+            print(cliente)
+    except Error as e:
+        print(f"Error al leer clientes: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
-def update_cliente(id_cliente, nombre_cliente, telefono, apellido_cliente):
-    """Actualiza la información de un cliente existente."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = """
-            UPDATE Cliente
-            SET nombre_Cliente = %s, telefono = %s, apellido_cliente = %s
-            WHERE idCliente = %s
-            """
-            cursor.execute(query, (nombre_cliente, telefono, apellido_cliente, id_cliente))
-            connection.commit()
-            print("Cliente actualizado con éxito.")
-        except Error as e:
-            print("Error al actualizar el cliente:", e)
-        finally:
-            cursor.close()
-            connection.close()
+# Actualizar Cliente
+def update_cliente(id_cliente, nombre_cliente, apellido_cliente, telefono):
+    query = "UPDATE Cliente SET nombre_cliente = %s, apellido_cliente = %s, telefono = %s WHERE idCliente = %s"
+    values = (nombre_cliente, apellido_cliente, telefono, id_cliente)
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, values)
+        conn.commit()
+        print("Cliente actualizado correctamente.")
+    except Error as e:
+        print(f"Error al actualizar cliente: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
+# Eliminar Cliente
 def delete_cliente(id_cliente):
-    """Elimina un cliente de la base de datos."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = "DELETE FROM Cliente WHERE idCliente = %s"
-            cursor.execute(query, (id_cliente,))
-            connection.commit()
-            print("Cliente eliminado con éxito.")
-        except Error as e:
-            print("Error al eliminar el cliente:", e)
-        finally:
-            cursor.close()
-            connection.close()
+    query = "DELETE FROM Cliente WHERE idCliente = %s"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (id_cliente,))
+        conn.commit()
+        print("Cliente eliminado correctamente.")
+    except Error as e:
+        print(f"Error al eliminar cliente: {e}")
+    finally:
+        cursor.close()
+        conn.close()

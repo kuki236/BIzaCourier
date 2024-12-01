@@ -1,70 +1,63 @@
 from database.conection import create_connection
 from mysql.connector import Error
-def create_empleado(nombre, cargo, username, contraseña):
-    """Crea un nuevo empleado en la base de datos."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = "INSERT INTO Empleado (nombre, cargo, username, contraseña) VALUES (%s, %s, %s, %s)"
-            cursor.execute(query, (nombre, cargo, username, contraseña))
-            connection.commit()
-            print("Empleado creado con éxito.")
-        except Error as e:
-            print("Error al crear el empleado:", e)
-        finally:
-            cursor.close()
-            connection.close()
+def create_empleado(nombre, apellido, cargo, username, contrasena):
+    query = "INSERT INTO Empleado (nombre, apellido, cargo, username, contrase\u00f1a) VALUES (%s, %s, %s, %s, %s)"
+    values = (nombre, apellido, cargo, username, contrasena)
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, values)
+        conn.commit()
+        print("Empleado creado correctamente.")
+    except Error as e:
+        print(f"Error al crear empleado: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
+# Leer Empleados
 def read_empleados():
-    """Obtiene todos los empleados de la base de datos."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = "SELECT * FROM Empleado"
-            cursor.execute(query)
-            result = cursor.fetchall()
-            for row in result:
-                print(row)
-        except Error as e:
-            print("Error al leer los empleados:", e)
-        finally:
-            cursor.close()
-            connection.close()
+    query = "SELECT * FROM Empleado"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query)
+        empleados = cursor.fetchall()
+        for empleado in empleados:
+            print(empleado)
+    except Error as e:
+        print(f"Error al leer empleados: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
-def update_empleado(id_empleado, nombre, cargo, username, contraseña):
-    """Actualiza la información de un empleado existente."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = """
-            UPDATE Empleado
-            SET nombre = %s, cargo = %s, username = %s, contraseña = %s
-            WHERE idEmpleado = %s
-            """
-            cursor.execute(query, (nombre, cargo, username, contraseña, id_empleado))
-            connection.commit()
-            print("Empleado actualizado con éxito.")
-        except Error as e:
-            print("Error al actualizar el empleado:", e)
-        finally:
-            cursor.close()
-            connection.close()
+# Actualizar Empleado
+def update_empleado(id_empleado, nombre, apellido, cargo, username, contrasena):
+    query = "UPDATE Empleado SET nombre = %s, apellido = %s, cargo = %s, username = %s, contrase\u00f1a = %s WHERE idEmpleado = %s"
+    values = (nombre, apellido, cargo, username, contrasena, id_empleado)
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, values)
+        conn.commit()
+        print("Empleado actualizado correctamente.")
+    except Error as e:
+        print(f"Error al actualizar empleado: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
+# Eliminar Empleado
 def delete_empleado(id_empleado):
-    """Elimina un empleado de la base de datos."""
-    connection = create_connection()
-    if connection is not None:
-        cursor = connection.cursor()
-        try:
-            query = "DELETE FROM Empleado WHERE idEmpleado = %s"
-            cursor.execute(query, (id_empleado,))
-            connection.commit()
-            print("Empleado eliminado con éxito.")
-        except Error as e:
-            print("Error al eliminar el empleado:", e)
-        finally:
-            cursor.close()
-            connection.close()
+    query = "DELETE FROM Empleado WHERE idEmpleado = %s"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (id_empleado,))
+        conn.commit()
+        print("Empleado eliminado correctamente.")
+    except Error as e:
+        print(f"Error al eliminar empleado: {e}")
+    finally:
+        cursor.close()
+        conn.close()
