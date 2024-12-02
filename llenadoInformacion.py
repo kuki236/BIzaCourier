@@ -32,30 +32,85 @@ def insertar_datos_ejemplo():
         )
 
     # Insertar ejemplos en la tabla Sucursal
-    for i in range(1, 6):
-        create_sucursal(
-            nombre_sucursal=f"Sucursal {i}",
-            direccion=f"Avenida Principal {i} Nro. {i * 10}",
-            codigo_postal=15000 + i,
-            horario_apertura="08:00",
-            horario_cierre="18:00"
-        )
+# Crear sucursales con direcciones reales en Perú
+    create_sucursal(
+        nombre_sucursal="Sucursal Lima",
+        direccion="Avenida Javier Prado Este 1234, San Isidro, Lima, Perú",
+        codigo_postal= 15046,
+        horario_apertura="08:00",
+        horario_cierre="18:00"
+    )
+
+    create_sucursal(
+        nombre_sucursal="Sucursal Arequipa",
+        direccion="Calle Mercaderes 207, Arequipa, Arequipa, Perú",
+        codigo_postal= 40012,
+        horario_apertura="08:00",
+        horario_cierre="18:00"
+    )
+
+    create_sucursal(
+        nombre_sucursal="Sucursal Cusco",
+        direccion="Avenida El Sol 1010, Cusco, Cusco, Perú",
+        codigo_postal= 80025,
+        horario_apertura="08:00",
+        horario_cierre="18:00"
+    )
+
+    create_sucursal(
+        nombre_sucursal="Sucursal Piura",
+        direccion="Avenida Sánchez Cerro 345, Piura, Piura, Perú",
+        codigo_postal= 20001,
+        horario_apertura="08:00",
+        horario_cierre="18:00"
+    )
 
     # Insertar ejemplos en la tabla Pedido
-    for i in range(1, 6):
-        create_pedido(
-            idPedido=i,
-            direccion_entrega=f"Avenida Secundaria {i} Mz {chr(65 + i)}",
-            codigo_postal_entrega=15050 + i,
-            idCliente=random.randint(1, 5),  # Cliente aleatorio
-            created_by=random.randint(1, 5)  # Empleado aleatorio
-        )
+    # Crear pedidos con direcciones de entrega reales y cercanas a las sucursales
+    create_pedido(
+        idPedido=1,
+        direccion_entrega="Calle Las Begonias 345, San Isidro, Lima, Perú",  # Cerca de Sucursal Lima
+        codigo_postal_entrega=15046,
+        idCliente=random.randint(1, 5),  # Cliente aleatorio
+        created_by=random.randint(1, 5)  # Empleado aleatorio
+    )
+
+    create_pedido(
+        idPedido=2,
+        direccion_entrega="Calle San Francisco 512, Cercado, Arequipa, Perú",  # Cerca de Sucursal Arequipa
+        codigo_postal_entrega=40011,
+        idCliente=random.randint(1, 5),
+        created_by=random.randint(1, 5)
+    )
+
+    create_pedido(
+        idPedido=3,
+        direccion_entrega="Av. Cusco, Cusco 08004",  # Cerca de Sucursal Cusco
+        codigo_postal_entrega= 80021,
+        idCliente=random.randint(1, 5),
+        created_by=random.randint(1, 5)
+    )
+
+    create_pedido(
+        idPedido=4,
+        direccion_entrega="Av. Sánchez Cerro, Piura 20001",  # Cerca de Sucursal Piura
+        codigo_postal_entrega=20001,
+        idCliente=random.randint(1, 5),
+        created_by=random.randint(1, 5)
+    )
+
+    create_pedido(
+        idPedido=5,
+        direccion_entrega="Avenida República de Panamá 1650, Surquillo, Lima, Perú",  # Cerca de Sucursal Lima
+        codigo_postal_entrega= 15047,
+        idCliente=random.randint(1, 5),
+        created_by=random.randint(1, 5)
+    )
 
     # Insertar ejemplos en la tabla TicketEncomienda
     for i in range(1, 6):
         create_ticket_encomienda(
             idSucursalOrigen=random.randint(1, 5),
-            idSucursalDestino=random.randint(1, 5),
             idPedido=i,
             fecha_recepcion=None,  # Siempre None
             fecha_estimada_entrega=None  # Siempre None
