@@ -16,10 +16,11 @@ class Login(tk.Tk):
         # Aqui van los estilos: ----------------------------------------
         estilo = ttk.Style()
         estilo.theme_use("clam")
-        # estilo para el frame
+
         # Cambiar el fondo del frame utilizando ttk.Style
         estilo.configure("TFrame", background="white")
-        # Aqui va la configuracion de las filas y columnas --------------
+
+        # Aqui va la configuracion de las filas y columnas de la ventana --------------
         for i in range(0, 3):
             self.rowconfigure(i, weight=1)
         for j in range(0, 3):
@@ -27,7 +28,7 @@ class Login(tk.Tk):
 
         # Creacion del frame para centrar el contenido ----------------
         self.Frame1 = ttk.Frame(self)
-        self.Frame1.grid(row=1,column=1,padx=10,pady=10)
+        self.Frame1.grid(row=1,column=1,padx=5,pady=5)
 
 
         for i in range(0,5):
@@ -35,7 +36,7 @@ class Login(tk.Tk):
         self.Frame1.columnconfigure(0,weight=1)
 
         # Aqui van los widgets -------------------------------------
-        self.lblInicioSesion = ttk.Label(self.Frame1, text="INICIO SESIÓN")
+        self.lblInicioSesion = ttk.Label(self.Frame1, text="INICIO SESIÓN",anchor="center")
         self.lblInicioSesion.grid(row=0,column=0,sticky="nsew", padx=5, pady=5)
 
         self.lblUsuario = ttk.Label(self.Frame1, text="Usuario: ")
