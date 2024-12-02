@@ -1,2 +1,2 @@
-mysql-connector-python==8.0.33
-pip install pandas openpyxl
+# mysql-connector-python==8.0.33
+# pip install pandas openpyxl
