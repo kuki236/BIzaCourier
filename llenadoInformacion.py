@@ -85,7 +85,7 @@ def insertar_datos_ejemplo():
 
     create_pedido(
         idPedido=3,
-        direccion_entrega="Av. Cusco, Cusco 08004",  # Cerca de Sucursal Cusco
+        direccion_entrega="Av. Cusco, Cusco Peru",  # Cerca de Sucursal Cusco
         codigo_postal_entrega= 80021,
         idCliente=random.randint(1, 5),
         created_by=random.randint(1, 5)
