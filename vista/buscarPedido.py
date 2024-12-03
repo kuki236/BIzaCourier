@@ -5,7 +5,7 @@ from tkinter import ttk
 class buscarPedido(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Login")
+        self.title("Buscar pedido")
         self.geometry("400x500")
         self.centrar_ventana()
         self.config(bg="#d4f4ff")
@@ -31,7 +31,7 @@ class buscarPedido(tk.Tk):
 
         self.Frame1.rowconfigure(0, weight=1)
         self.Frame1.rowconfigure(0,weight=1)
-
+        self.Frame1.columnconfigure(0, weight=1)
 
         self.lblTitulo = ttk.Label(self.Frame1, text="Seguimiento de Pedido", anchor="center")
         self.lblTitulo.grid(row=0,column=0, sticky="nsew", pady=5)
