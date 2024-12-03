@@ -1,12 +1,13 @@
 from database.conection import create_connection
 from mysql.connector import Error
 from datetime import datetime  
+from datetime import timedelta
 import requests
 from urllib.parse import quote_plus
 from datetime import datetime
 from mysql.connector import Error
 from math import radians, cos, sin, sqrt, atan2
-
+import random
 # Función para obtener latitud y longitud de una dirección
 def obtener_latitud_longitud(direccion):
     direccion_codificada = quote_plus(direccion)
@@ -38,6 +39,15 @@ def calcular_distancia(coord1, coord2):
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
 
+# Calcular fecha estimada de entrega basada en la distancia
+def calcular_fecha_estimada_entrega(distancia_km):
+    horas_por_km = 0.05  # Tiempo base: 20 km/h promedio
+    tiempo_base_horas = distancia_km * horas_por_km
+    variacion = random.uniform(-0.2, 0.2) * tiempo_base_horas  # Variación de -20% a +20%
+    tiempo_total_horas = tiempo_base_horas + variacion
+    dias_estimados = tiempo_total_horas / 8  # Jornada de 8 horas
+    fecha_estimada = datetime.now() + timedelta(days=dias_estimados)
+    return fecha_estimada
 # Crear ticket encomienda con cálculo del idSucursalDestino
 def create_ticket_encomienda(estado_transferencia="Creado", idSucursalOrigen=None, idPedido=None, fecha_recepcion=None, fecha_estimada_entrega=None):
     try:
@@ -76,7 +86,10 @@ def create_ticket_encomienda(estado_transferencia="Creado", idSucursalOrigen=Non
                     distancias.append((distancia, id_sucursal))
             
             # Obtener la sucursal más cercana
-            idSucursalDestino = min(distancias, key=lambda x: x[0])[1]
+            distancia_minima, idSucursalDestino = min(distancias, key=lambda x: x[0])
+
+            # Calcular fecha estimada de entrega
+            fecha_estimada_entrega = calcular_fecha_estimada_entrega(distancia_minima)
             
             # Insertar el ticket encomienda
             fecha_inicio = datetime.now()
