@@ -1,71 +1,98 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
-# Cliente
+from tkinter import ttk, messagebox
+import folium
+from folium import IFrame
+import os
+import webbrowser
+from models.ticketEncomienda import obtener_latitud_longitud, read_ticket_encomienda
+from PIL import Image, ImageTk
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 class gestionDeDatosCliente(tk.Tk):
-    def __init__(self):
+    def __init__(self, nombre_pedido):
         super().__init__()
-        self.title("Gestion de datos")
-        self.geometry("700x600")
+        self.title("Gestión de datos")
+        self.geometry("800x700")
         self.centrar_ventana()
         self.config(bg="white")
+        self.nombre_pedido = nombre_pedido
+        self.direccion_entrega = None
+        self.sucursal_destino = None
+        self.nombre_cliente = None
+        self.nombre_empleado = None
+        self.obtener_datos()
         self.agregar_widgets()
 
+    def obtener_datos(self):
+        # Obtener datos de la base de datos usando las funciones de `ticketEncomienda`
+        datos = read_ticket_encomienda()
+        for dato in datos:
+            if dato['nombre_pedido'] == self.nombre_pedido:
+                self.direccion_entrega = dato['direccion_entrega']
+                self.sucursal_destino = dato['nombre_sucursal_destino']
+                self.nombre_cliente = dato['nombre_cliente']
+                self.nombre_empleado = dato['nombre_empleado']
+                break
+
     def agregar_widgets(self):
-        # aqui van los estilos
+        # Título de la ventana
+        title_label = ttk.Label(self, text=f"Gestión de Encomienda para: {self.nombre_pedido}", font=("Helvetica", 16))
+        title_label.pack(pady=10)
 
-        self.rowconfigure(0,weight=1)
-        self.columnconfigure(0,weight=1)
-        self.columnconfigure(1,weight=1)
+        # Mostrar la dirección de entrega y la sucursal de destino
+        ttk.Label(self, text="Dirección de entrega:").pack(pady=5)
+        ttk.Label(self, text=self.direccion_entrega, wraplength=700).pack(pady=5)
 
-        # Creacion del frame1 donde estará la informacion
+        ttk.Label(self, text="Sucursal de destino:").pack(pady=5)
+        ttk.Label(self, text=self.sucursal_destino, wraplength=700).pack(pady=5)
 
-        self.Frame1 = ttk.Frame(self)
-        self.Frame1.grid(row=0,column=0,sticky="nsew", padx=15,pady=10)
+        # Botón para ver el mapa
+        ver_mapa_btn = ttk.Button(self, text="Ver en Mapa", command=self.mostrar_mapa)
+        ver_mapa_btn.pack(pady=10)
 
-        for i in range(0,11):
-            self.Frame1.rowconfigure(i,weight=1)
-        self.Frame1.columnconfigure(0,weight=1)
+    def mostrar_mapa(self):
+        # Crear un mapa de folium centrado en la dirección de entrega y la dirección de la sucursal de destino
+        if not self.direccion_entrega or not self.sucursal_destino:
+            messagebox.showerror("Error", "No se han cargado las direcciones necesarias.")
+            return
 
-        # Aqui iran los widgets para el frame1
-        self.lblDetallesPed = ttk.Label(self.Frame1,text="Detalles del pedido")
-        self.lblDetallesPed.grid(row=0,column=0,sticky="w")
-        self.dirEnt = ttk.Label(self.Frame1, text="Dirección de entrega:")
-        self.dirEnt.grid(row=1, column=0, sticky="w")
-        self.modDirec = ttk.Label(self.Frame1, text="[Direccion]") # por modificar
-        self.modDirec.grid(row=2, column=0, sticky="w")
-        self.nombreCliente = ttk.Label(self.Frame1, text="Nombre del cliente:")
-        self.nombreCliente.grid(row=3, column=0, sticky="w")
-        self.modNombreCliente = ttk.Label(self.Frame1, text="[Nombre cliente]")  # por modificar
-        self.modDirec.grid(row=4, column=0, sticky="w")
-        self.nombreEmpleado = ttk.Label(self.Frame1, text="Nombre del empleado:")
-        self.nombreEmpleado.grid(row=5, column=0, sticky="w")
-        self.modNombreEmpleado = ttk.Label(self.Frame1, text="[Nombre empleado]")  # por modificar
-        self.modNombreEmpleado.grid(row=6, column=0, sticky="w")
-        self.sucOrig = ttk.Label(self.Frame1, text="Sucursal de origen:")
-        self.sucOrig.grid(row=7, column=0, sticky="w")
-        self.modSucOrig = ttk.Label(self.Frame1, text="[Sucursal de origen]")  # por modificar
-        self.modSucOrig.grid(row=8, column=0, sticky="w")
-        self.sucDest = ttk.Label(self.Frame1, text="Sucursal de Destino:")
-        self.sucDest.grid(row=9, column=0, sticky="w")
-        self.modSucDest = ttk.Label(self.Frame1, text="[Sucursal de Destino]")  # por modificar
-        self.modSucDest.grid(row=10, column=0, sticky="w")
+        # Crear el mapa
+        m = folium.Map(location=[0, 0], zoom_start=13)
 
+        # Agregar marcador para la dirección de entrega
+        lat_entrega, lon_entrega = obtener_latitud_longitud(self.direccion_entrega)
+        if lat_entrega and lon_entrega:
+            folium.Marker(
+                location=[lat_entrega, lon_entrega],
+                popup=f"Dirección de entrega: {self.direccion_entrega}",
+                icon=folium.Icon(color="green")
+            ).add_to(m)
 
+        # Agregar marcador para la sucursal de destino
+        lat_sucursal, lon_sucursal = obtener_latitud_longitud(self.sucursal_destino)
+        if lat_sucursal and lon_sucursal:
+            folium.Marker(
+                location=[lat_sucursal, lon_sucursal],
+                popup=f"Sucursal de destino: {self.sucursal_destino}",
+                icon=folium.Icon(color="blue")
+            ).add_to(m)
 
-
-        # creacion del frame2 donde estará el mapa
-        self.Frame2 = ttk.Frame(self)
-        self.Frame2.grid(row=0,column=1,sticky="nsew", padx=15,pady=10)
+        # Guardar el mapa en un archivo temporal y abrirlo en el navegador
+        mapa_path = "mapa_encomienda.html"
+        m.save(mapa_path)
+        webbrowser.open(f'file://{os.path.abspath(mapa_path)}')
 
     def centrar_ventana(self):
-        self.update_idletasks()
-        width = self.winfo_width()
-        height = self.winfo_height()
-        x = (self.winfo_screenwidth() // 2) - (width // 2)
-        y = (self.winfo_screenheight() // 2) - (height // 2)
-        self.geometry(f"{width}x{height}+{x}+{y}")
+        ventana_ancho = self.winfo_width()
+        ventana_alto = self.winfo_height()
+        pantalla_ancho = self.winfo_screenwidth()
+        pantalla_alto = self.winfo_screenheight()
+        x = (pantalla_ancho // 2) - (ventana_ancho // 2)
+        y = (pantalla_alto // 2) - (ventana_alto // 2)
+        self.geometry(f'{ventana_ancho}x{ventana_alto}+{x}+{y}')
 
 if __name__ == "__main__":
-    gDatos = gestionDeDatosCliente()
-    gDatos.mainloop()
+    nombre_pedido = "9BKP0TFZJCZ2"
+    app = gestionDeDatosCliente(nombre_pedido)
+    app.mainloop()

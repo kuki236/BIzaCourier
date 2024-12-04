@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 import os
-print("Directorio actual:", os.getcwd())
+import sys
+sys.path.append('C:\\Users\\Usuario\\Desktop\\yo\\BIzaCourier')
+
 
 class GestionDeDatosSucursalEmpleado(tk.Tk):
     def __init__(self):
@@ -75,16 +77,17 @@ class GestionDeDatosSucursalEmpleado(tk.Tk):
         self.lblRegistros = ttk.Label(self.Frame3, text="Registros")
         self.lblRegistros.grid(row=0, column=0, sticky="w", padx=5)
 
-        # Tabla
-        columnas_tabla = ("ID Empleado", "ID Sucursal")
+        columnas_tabla = ("Nombre Empleado", "Nombre Sucursal")
         self.tabla = ttk.Treeview(self.Frame3, columns=columnas_tabla, show="headings")
         self.tabla.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
+        # Configura los encabezados de las columnas de la tabla.
         for item_columna in columnas_tabla:
             self.tabla.heading(item_columna, text=item_columna)
 
-        self.tabla.column("ID Empleado", width=150, anchor="center")
-        self.tabla.column("ID Sucursal", width=150, anchor="center")
+        # Ajusta las columnas de la tabla para que se vean de manera adecuada.
+        self.tabla.column("Nombre Empleado", width=200, anchor="center")
+        self.tabla.column("Nombre Sucursal", width=200, anchor="center")
 
         self.cargar_tabla()
         self.tabla.bind("<ButtonRelease-1>", self.obtener_fila_seleccionada)
@@ -97,11 +100,12 @@ class GestionDeDatosSucursalEmpleado(tk.Tk):
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
 
+# Modifica la función cargar_tabla para que pase los datos correctamente.
     def cargar_tabla(self):
         from models.SucursalEmpleado import read_asignaciones
         self.datos_asignaciones = read_asignaciones()
-        for empleado_id, sucursal_id in self.datos_asignaciones:
-            self.tabla.insert("", "end", values=(empleado_id, sucursal_id))
+        for nombre_empleado, nombre_sucursal in self.datos_asignaciones:
+            self.tabla.insert("", "end", values=(nombre_empleado, nombre_sucursal))
 
     def actualizar_tabla(self):
         for item in self.tabla.get_children():

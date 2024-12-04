@@ -65,6 +65,14 @@ def insertar_datos_ejemplo():
         horario_cierre="18:00"
     )
 
+    create_sucursal(
+        nombre_sucursal="Sucursal Barranco",
+        direccion="jiron junin barranco",
+        codigo_postal= 20003,
+        horario_apertura="08:00",
+        horario_cierre="18:00"
+    )
+
     # Insertar ejemplos en la tabla Pedido
     # Crear pedidos con direcciones de entrega reales y cercanas a las sucursales
     create_pedido(
