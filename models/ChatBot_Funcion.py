@@ -1,4 +1,4 @@
-from database.connection import create_connection
+from database.conection import create_connection
 from mysql.connector import Error
 
 def consultar_estado_pedido():

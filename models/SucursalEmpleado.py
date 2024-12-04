@@ -72,3 +72,51 @@ def asignar_empleado_a_sucursal(id_empleado, id_sucursal):
     finally:
         cursor.close()
         conn.close()
+# Leer asignaciones
+def read_asignaciones():
+    query = "SELECT idEmpleado, idSucursal FROM EmpleadoSucursal"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
+    except Error as e:
+        print(f"Error al leer asignaciones: {e}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
+
+# Actualizar una asignación existente
+def update_asignacion(empleado_id_anterior, sucursal_id_anterior, nuevo_empleado_id, nueva_sucursal_id):
+    query = """
+        UPDATE EmpleadoSucursal
+        SET idEmpleado = %s, idSucursal = %s
+        WHERE idEmpleado = %s AND idSucursal = %s
+    """
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (nuevo_empleado_id, nueva_sucursal_id, empleado_id_anterior, sucursal_id_anterior))
+        conn.commit()
+        print("Asignación actualizada correctamente.")
+    except Error as e:
+        print(f"Error al actualizar la asignación: {e}")
+    finally:
+        cursor.close()
+        conn.close()
+
+# Eliminar una asignación
+def delete_asignacion(empleado_id, sucursal_id):
+    query = "DELETE FROM EmpleadoSucursal WHERE idEmpleado = %s AND idSucursal = %s"
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query, (empleado_id, sucursal_id))
+        conn.commit()
+        print("Asignación eliminada correctamente.")
+    except Error as e:
+        print(f"Error al eliminar la asignación: {e}")
+    finally:
+        cursor.close()
+        conn.close()
