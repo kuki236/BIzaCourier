@@ -12,7 +12,6 @@ class gestionDeDatosCliente(tk.Tk):
         self.agregar_widgets()
 
     def agregar_widgets(self):
-        # aqui van los estilos
 
         self.rowconfigure(0,weight=1)
         self.columnconfigure(0,weight=1)
