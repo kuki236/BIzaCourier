@@ -34,8 +34,7 @@ def read_pedidos():
         cursor = connection.cursor()
         cursor.execute(query)
         results = cursor.fetchall()
-        for row in results:
-            print(row)
+        return results
     except Error as e:
         print(f"Error al leer los pedidos: {e}")
     finally:
