@@ -65,5 +65,5 @@ class vistaEmpleado(tk.Tk):
 
 
 if __name__ == "__main__":
-    iniciar_menu = Inicio()
+    iniciar_menu = vistaEmpleado()
     iniciar_menu.mainloop()
