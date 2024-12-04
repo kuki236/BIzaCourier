@@ -22,8 +22,7 @@ def read_sucursales():
         cursor = conn.cursor()
         cursor.execute(query)
         sucursales = cursor.fetchall()
-        for sucursal in sucursales:
-            print(sucursal)
+        return sucursales
     except Error as e:
         print(f"Error al leer sucursales: {e}")
     finally:
