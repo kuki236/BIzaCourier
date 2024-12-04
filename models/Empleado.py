@@ -1,5 +1,6 @@
 from database.conection import create_connection
 from mysql.connector import Error
+
 def create_empleado(nombre, apellido, cargo, username, contrasena):
     query = "INSERT INTO Empleado (nombre, apellido, cargo, username, contrase\u00f1a) VALUES (%s, %s, %s, %s, %s)"
     values = (nombre, apellido, cargo, username, contrasena)
@@ -23,8 +24,8 @@ def read_empleados():
         cursor = conn.cursor()
         cursor.execute(query)
         empleados = cursor.fetchall()
-        for empleado in empleados:
-            print(empleado)
+        print("Cargando datos de tabla Empleado")
+        return empleados
     except Error as e:
         print(f"Error al leer empleados: {e}")
     finally:
