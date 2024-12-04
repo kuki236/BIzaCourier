@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-# Empleado
+# Gestion de datos pedido
 class gestionDeDatosPedido(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -183,7 +183,7 @@ class gestionDeDatosPedido(tk.Tk):
         fechaRe = self.entradaFechaRe.get()
         fechaEsEn = self.entradaFechaEsEnt.get()
 
-        if nombre and apellido and cargo and username and contrasenia:
+        if estado and fechaIn and fechaRe and fechaEsEn:
             create_empleado(nombre, apellido, cargo, username, contrasenia)
             messagebox.showinfo("Empleado", f"El empleado {nombre} {apellido} se agregó correctamente")
             self.actualizarTabla()
