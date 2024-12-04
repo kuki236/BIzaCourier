@@ -225,7 +225,7 @@ class gestionDeDatosEmpleado(tk.Tk):
                     return
 
             else:
-                messagebox.showerror("Error", "Hubo un problema al actualizar empleado")
+                messagebox.showerror("Error", "Hubo un problema al eliminar empleado")
 
 
 if __name__ == "__main__":
