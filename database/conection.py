@@ -6,9 +6,9 @@ def create_connection():
         connection = mysql.connector.connect(
             host="127.0.0.1",
             user="root",  # Cambia esto por tu usuario
-            password="LamineYamal728",  # Cambia esto por tu contraseña
+            password="mondongo",  # Cambia esto por tu contraseña
             database="bizaCourier",
-            port=3307  # Especifica el puerto aquí
+            port=3306  # Especifica el puerto aquí
         )
         if connection.is_connected():
             print("Conexión exitosa a la base de datos")

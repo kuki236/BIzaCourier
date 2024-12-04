@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 # Gestion de datos pedido
-class gestionDeDatosPedido(tk.Tk):
+class gestionDeDatosTicketEncomienda(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Gestion de datos Pedido")
@@ -184,7 +184,7 @@ class gestionDeDatosPedido(tk.Tk):
         fechaEsEn = self.entradaFechaEsEnt.get()
 
         if estado and fechaIn and fechaRe and fechaEsEn:
-            create_empleado(nombre, apellido, cargo, username, contrasenia)
+            create_ticket_encomienda(estado, a, cargo, username, contrasenia)
             messagebox.showinfo("Empleado", f"El empleado {nombre} {apellido} se agregó correctamente")
             self.actualizarTabla()
             self.limpiar_entradas()
@@ -234,5 +234,5 @@ class gestionDeDatosPedido(tk.Tk):
 
 
 if __name__ == "__main__":
-    gDatos = gestionDeDatosPedido()
+    gDatos = gestionDeDatosTicketEncomienda()
     gDatos.mainloop()
