@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 
-from vista.detallesPedido import gestionDeDatosCliente
-
 
 class inicio(tk.Tk):
     def __init__(self):
@@ -83,6 +81,10 @@ class inicio(tk.Tk):
         gDatos = gestionDeDatosCliente()
         gDatos.mainloop()
     def asignarEmpleado(self):
+        from vista.sucursalEmpleado import GestionDeDatosSucursalEmpleado
+        self.destroy()
+        gSucursalEmpleado = GestionDeDatosSucursalEmpleado()
+        gSucursalEmpleado.mainloop()
         pass
     def buscarPedido(self):
         from vista.buscarPedido import buscarPedido

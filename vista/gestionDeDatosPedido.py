@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 # Pedido
-class gestionDeDatosEmpleado(tk.Tk):
+class gestionDeDatosPedido(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Gestion de datos del pedido")

@@ -1,9 +1,10 @@
 from database.conection import create_connection
 from mysql.connector import Error
 
+
 # Validar si un empleado existe
 def validar_existencia_empleado(id_empleado):
-    query = "SELECT COUNT(*) FROM Empleado WHERE idEmpleado = %s"
+    query = "SELECT COUNT(*) FROM empleado WHERE idEmpleado = %s"
     try:
         conn = create_connection()
         cursor = conn.cursor()
@@ -17,9 +18,10 @@ def validar_existencia_empleado(id_empleado):
         cursor.close()
         conn.close()
 
+
 # Validar si una sucursal existe
 def validar_existencia_sucursal(id_sucursal):
-    query = "SELECT COUNT(*) FROM Sucursal WHERE idSucursal = %s"
+    query = "SELECT COUNT(*) FROM sucursal WHERE idSucursal = %s"
     try:
         conn = create_connection()
         cursor = conn.cursor()
@@ -33,6 +35,7 @@ def validar_existencia_sucursal(id_sucursal):
         cursor.close()
         conn.close()
 
+
 # Asignar un empleado a una sucursal con validación
 def asignar_empleado_a_sucursal(id_empleado, id_sucursal):
     if not validar_existencia_empleado(id_empleado):
@@ -41,9 +44,9 @@ def asignar_empleado_a_sucursal(id_empleado, id_sucursal):
     if not validar_existencia_sucursal(id_sucursal):
         print(f"La sucursal con ID {id_sucursal} no existe.")
         return
-    
+
     # Verificar si la relación ya existe
-    query_verificar = "SELECT COUNT(*) FROM EmpleadoSucursal WHERE idEmpleado = %s AND idSucursal = %s"
+    query_verificar = "SELECT COUNT(*) FROM sucursalempleado WHERE idEmpleadoAsignado = %s AND idSucursalAsignada = %s"
     try:
         conn = create_connection()
         cursor = conn.cursor()
@@ -60,7 +63,7 @@ def asignar_empleado_a_sucursal(id_empleado, id_sucursal):
         conn.close()
 
     # Asignar al empleado a la sucursal
-    query_asignar = "INSERT INTO EmpleadoSucursal (idEmpleado, idSucursal) VALUES (%s, %s)"
+    query_asignar = "INSERT INTO sucursalempleado (idEmpleadoAsignado, idSucursalAsignada) VALUES (%s, %s)"
     try:
         conn = create_connection()
         cursor = conn.cursor()
@@ -72,9 +75,21 @@ def asignar_empleado_a_sucursal(id_empleado, id_sucursal):
     finally:
         cursor.close()
         conn.close()
-# Leer asignaciones
+
+
+# Leer asignaciones con nombres de empleado y sucursal
 def read_asignaciones():
-    query = "SELECT idEmpleado, idSucursal FROM EmpleadoSucursal"
+    query = """
+    SELECT 
+        e.nombre AS nombre_empleado, 
+        s.nombre_sucursal AS nombre_sucursal
+    FROM 
+        sucursalempleado se
+    JOIN 
+        empleado e ON se.idEmpleadoAsignado = e.idEmpleado
+    JOIN 
+        sucursal s ON se.idSucursalAsignada = s.idSucursal
+    """
     try:
         conn = create_connection()
         cursor = conn.cursor()
@@ -87,12 +102,13 @@ def read_asignaciones():
         cursor.close()
         conn.close()
 
+
 # Actualizar una asignación existente
 def update_asignacion(empleado_id_anterior, sucursal_id_anterior, nuevo_empleado_id, nueva_sucursal_id):
     query = """
-        UPDATE EmpleadoSucursal
-        SET idEmpleado = %s, idSucursal = %s
-        WHERE idEmpleado = %s AND idSucursal = %s
+        UPDATE sucursalempleado
+        SET idEmpleadoAsignado = %s, idSucursalAsignada = %s
+        WHERE idEmpleadoAsignado = %s AND idSucursalAsignada = %s
     """
     try:
         conn = create_connection()
@@ -106,9 +122,10 @@ def update_asignacion(empleado_id_anterior, sucursal_id_anterior, nuevo_empleado
         cursor.close()
         conn.close()
 
+
 # Eliminar una asignación
 def delete_asignacion(empleado_id, sucursal_id):
-    query = "DELETE FROM EmpleadoSucursal WHERE idEmpleado = %s AND idSucursal = %s"
+    query = "DELETE FROM sucursalempleado WHERE idEmpleadoAsignado = %s AND idSucursalAsignada = %s"
     try:
         conn = create_connection()
         cursor = conn.cursor()

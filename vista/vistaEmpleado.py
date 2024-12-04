@@ -56,8 +56,11 @@ class vistaEmpleado(tk.Tk):
 
     # Funciones para los botones
     def crear_pedido(self):
-        print("Función Crear Pedido llamada.")
-        # Aquí podrías llamar a otra clase o ventana si es necesario
+        from vista.gestionDeDatosPedido import gestionDeDatosPedido
+        self.destroy()
+        gPedido = gestionDeDatosPedido()
+        gPedido.mainloop()
+        # Aquí podrías llamar a otra Sclase o ventana si es necesario
 
     def cambiar_estado_pedido(self):
         print("Función Cambiar Estado Pedido llamada.")

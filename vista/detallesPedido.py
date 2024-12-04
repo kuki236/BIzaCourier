@@ -1,71 +1,119 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
-# Cliente
-class gestionDeDatosCliente(tk.Tk):
-    def __init__(self):
+from tkinter import ttk, messagebox
+import folium
+import os
+import webbrowser
+from models.ticketEncomienda import obtener_latitud_longitud, read_ticket_encomienda
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+class DetallesPedido(tk.Tk):
+    def __init__(self, nombre_pedido):
         super().__init__()
-        self.title("Gestion de datos")
-        self.geometry("700x600")
-        self.centrar_ventana()
+        self.title("Gestión de datos")
+        self.geometry("800x700")
         self.config(bg="white")
+        self.nombre_pedido = nombre_pedido
+
+        # Inicialización de variables
+        self.direccion_entrega = "Información no disponible"
+        self.sucursal_origen = "Información no disponible"
+        self.sucursal_destino = "Información no disponible"
+        self.estado_transferencia = "Información no disponible"
+        self.fecha_estimada_entrega = "Información no disponible"
+
+        # Obtener datos y cargar widgets
+        self.obtener_datos()
         self.agregar_widgets()
 
+    def obtener_datos(self):
+        try:
+            datos = read_ticket_encomienda()
+
+            if datos:
+                for dato in datos:
+                    if dato.get('nombre_pedido') == self.nombre_pedido:
+                        self.direccion_entrega = dato.get('direccion_entrega', 'Información no disponible')
+                        self.sucursal_origen = dato.get('nombre_sucursal_origen', 'Información no disponible')
+                        self.sucursal_destino = dato.get('nombre_sucursal_destino', 'Información no disponible')
+                        self.estado_transferencia = dato.get('estado_transferencia', 'Información no disponible')
+                        self.fecha_estimada_entrega = dato.get('fecha_estimada_entrega', 'Información no disponible')
+                        break
+                else:
+                    messagebox.showerror("Error", f"No se encontró un pedido con el nombre '{self.nombre_pedido}'.")
+            else:
+                messagebox.showerror("Error", "No se encontraron datos en la base de datos.")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al obtener datos: {e}")
+
     def agregar_widgets(self):
-        # aqui van los estilos
+        # Título de la ventana
+        ttk.Label(self, text=f"Gestión de Encomienda: {self.nombre_pedido}", font=("Helvetica", 16)).grid(row=0, column=0, columnspan=2, pady=10)
 
-        self.rowconfigure(0,weight=1)
-        self.columnconfigure(0,weight=1)
-        self.columnconfigure(1,weight=1)
+        # Mostrar detalles del pedido
+        self.mostrar_detalle("Dirección de entrega:", self.direccion_entrega, 1)
+        self.mostrar_detalle("Sucursal de origen:", self.sucursal_origen, 2)
+        self.mostrar_detalle("Sucursal de destino:", self.sucursal_destino, 3)
+        self.mostrar_detalle("Estado de transferencia:", self.estado_transferencia, 4)
+        self.mostrar_detalle("Fecha estimada de entrega:", self.fecha_estimada_entrega, 5)
 
-        # Creacion del frame1 donde estará la informacion
+        # Botón para ver en mapa
+        ttk.Button(self, text="Ver en Mapa", command=self.mostrar_mapa).grid(row=6, column=0, columnspan=2, pady=20)
 
-        self.Frame1 = ttk.Frame(self)
-        self.Frame1.grid(row=0,column=0,sticky="nsew", padx=15,pady=10)
+    def mostrar_detalle(self, titulo, detalle, fila):
+        ttk.Label(self, text=titulo, font=("Helvetica", 10, "bold")).grid(row=fila, column=0, sticky="w", padx=10, pady=2)
+        ttk.Label(self, text=detalle, wraplength=700).grid(row=fila, column=1, sticky="w", padx=10, pady=2)
 
-        for i in range(0,11):
-            self.Frame1.rowconfigure(i,weight=1)
-        self.Frame1.columnconfigure(0,weight=1)
+    def mostrar_mapa(self):
+        if not self.direccion_entrega or not self.sucursal_origen or not self.sucursal_destino:
+            messagebox.showerror("Error", "No se han cargado todas las direcciones necesarias.")
+            return
 
-        # Aqui iran los widgets para el frame1
-        self.lblDetallesPed = ttk.Label(self.Frame1,text="Detalles del pedido")
-        self.lblDetallesPed.grid(row=0,column=0,sticky="w")
-        self.dirEnt = ttk.Label(self.Frame1, text="Dirección de entrega:")
-        self.dirEnt.grid(row=1, column=0, sticky="w")
-        self.modDirec = ttk.Label(self.Frame1, text="[Direccion]") # por modificar
-        self.modDirec.grid(row=2, column=0, sticky="w")
-        self.nombreCliente = ttk.Label(self.Frame1, text="Nombre del cliente:")
-        self.nombreCliente.grid(row=3, column=0, sticky="w")
-        self.modNombreCliente = ttk.Label(self.Frame1, text="[Nombre cliente]")  # por modificar
-        self.modDirec.grid(row=4, column=0, sticky="w")
-        self.nombreEmpleado = ttk.Label(self.Frame1, text="Nombre del empleado:")
-        self.nombreEmpleado.grid(row=5, column=0, sticky="w")
-        self.modNombreEmpleado = ttk.Label(self.Frame1, text="[Nombre empleado]")  # por modificar
-        self.modNombreEmpleado.grid(row=6, column=0, sticky="w")
-        self.sucOrig = ttk.Label(self.Frame1, text="Sucursal de origen:")
-        self.sucOrig.grid(row=7, column=0, sticky="w")
-        self.modSucOrig = ttk.Label(self.Frame1, text="[Sucursal de origen]")  # por modificar
-        self.modSucOrig.grid(row=8, column=0, sticky="w")
-        self.sucDest = ttk.Label(self.Frame1, text="Sucursal de Destino:")
-        self.sucDest.grid(row=9, column=0, sticky="w")
-        self.modSucDest = ttk.Label(self.Frame1, text="[Sucursal de Destino]")  # por modificar
-        self.modSucDest.grid(row=10, column=0, sticky="w")
+        try:
+            # Crear el mapa
+            m = folium.Map(location=[0, 0], zoom_start=13)
 
+            # Coordenadas de entrega
+            lat_entrega, lon_entrega = obtener_latitud_longitud(self.direccion_entrega)
+            if lat_entrega and lon_entrega:
+                folium.Marker(
+                    location=[lat_entrega, lon_entrega],
+                    popup=f"Dirección de entrega: {self.direccion_entrega}",
+                    icon=folium.Icon(color="green")
+                ).add_to(m)
 
+            # Coordenadas de sucursal de origen
+            lat_origen, lon_origen = obtener_latitud_longitud(self.sucursal_origen)
+            if lat_origen and lon_origen:
+                folium.Marker(
+                    location=[lat_origen, lon_origen],
+                    popup=f"Sucursal de origen: {self.sucursal_origen}",
+                    icon=folium.Icon(color="blue")
+                ).add_to(m)
 
+            # Coordenadas de sucursal de destino
+            lat_destino, lon_destino = obtener_latitud_longitud(self.sucursal_destino)
+            if lat_destino and lon_destino:
+                folium.Marker(
+                    location=[lat_destino, lon_destino],
+                    popup=f"Sucursal de destino: {self.sucursal_destino}",
+                    icon=folium.Icon(color="red")
+                ).add_to(m)
 
-        # creacion del frame2 donde estará el mapa
-        self.Frame2 = ttk.Frame(self)
-        self.Frame2.grid(row=0,column=1,sticky="nsew", padx=15,pady=10)
+            # Guardar y abrir el mapa
+            mapa_path = "mapa_encomienda.html"
+            m.save(mapa_path)
+            webbrowser.open(f'file://{os.path.abspath(mapa_path)}')
 
-    def centrar_ventana(self):
-        self.update_idletasks()
-        width = self.winfo_width()
-        height = self.winfo_height()
-        x = (self.winfo_screenwidth() // 2) - (width // 2)
-        y = (self.winfo_screenheight() // 2) - (height // 2)
-        self.geometry(f"{width}x{height}+{x}+{y}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Ocurrió un error al generar el mapa: {e}")
+
 
 if __name__ == "__main__":
-    gDatos = gestionDeDatosCliente()
-    gDatos.mainloop()
+    nombre_pedido = input("Ingrese el nombre del pedido: ").strip()
+    if nombre_pedido:
+        app = DetallesPedido(nombre_pedido)
+        app.mainloop()
+    else:
+        print("El nombre del pedido no puede estar vacío.")
