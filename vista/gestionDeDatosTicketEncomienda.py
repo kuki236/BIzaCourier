@@ -46,8 +46,8 @@ class gestionDeDatosTicketEncomienda(tk.Tk):
         self.Frame2 = ttk.Frame(self)
         self.Frame2.grid(row=1,column=0,sticky="nsew", padx=5,pady=5)
 
-        # 11 filas y 3 columnas
-        for i in range(0,11):
+        # 12 filas y 3 columnas
+        for i in range(0,12):
             self.Frame2.rowconfigure(i, weight=1)
         for i in range(0,3):
             self.Frame2.columnconfigure(i,weight=1)
@@ -71,18 +71,24 @@ class gestionDeDatosTicketEncomienda(tk.Tk):
         self.entradaFechaRe.grid(row=6, column=0, columnspan=3, sticky="w")
 
 
-        self.lblFechaEsEnt = ttk.Label(self.Frame2, text="Fecha estimada de entrega:")
-        self.lblFechaEsEnt.grid(row=7, column=0, sticky="w", columnspan=3)
-        self.entradaFechaEsEnt = ttk.Entry(self.Frame2, width=50)
-        self.entradaFechaEsEnt.grid(row=8, column=0, columnspan=3, sticky="w")
+        self.lblSucOri = ttk.Label(self.Frame2, text="Id sucursal de origen:")
+        self.lblSucOri.grid(row=7, column=0, sticky="w", columnspan=3)
+        self.entradaSucOri = ttk.Entry(self.Frame2, width=50)
+        self.entradaSucOri.grid(row=8, column=0, columnspan=3, sticky="w")
+
+        self.lblIdPedido = ttk.Label(self.Frame2, text="Id del pedido:")
+        self.lblIdPedido.grid(row=9, column=0, sticky="w", columnspan=3)
+        self.entradaIdPedido = ttk.Entry(self.Frame2, width=50)
+        self.entradaIdPedido.grid(row=10, column=0, columnspan=3, sticky="w")
+
 
         # Creacion de botones
         self.botonCrear = ttk.Button(self.Frame2, text="Crear", command=self.crearEmpleado)
-        self.botonCrear.grid(row=10,column=0)
+        self.botonCrear.grid(row=11,column=0)
         self.botonActualizar = ttk.Button(self.Frame2, text= "Actualizar",command=self.actualizarEmpleado)
-        self.botonActualizar.grid(row=10, column=1)
+        self.botonActualizar.grid(row=11, column=1)
         self.botonEliminar = ttk.Button(self.Frame2, text="Eliminar", command=self.eliminarEmpleado)
-        self.botonEliminar.grid(row=10,column=2)
+        self.botonEliminar.grid(row=11,column=2)
 
 
         # Creacion del frame3 para la tabla
@@ -137,6 +143,7 @@ class gestionDeDatosTicketEncomienda(tk.Tk):
     def cargarTabla(self):
         from models.ticketEncomienda import read_ticket_encomienda
         self.datos_ticket = read_ticket_encomienda()
+        print(self.datos_ticket)
         for ide,estado, fechaIn, fechaRe, fechaEsEn, idOrig, idDesti, idPedido in self.datos_ticket:
             self.tabla.insert("", "end", values=(ide, estado, fechaIn, fechaRe, fechaEsEn, idOrig, idDesti, idPedido))
 
@@ -156,8 +163,10 @@ class gestionDeDatosTicketEncomienda(tk.Tk):
             # Rellena las entradas con los valores de la fila seleccionada
             self.comboEstado.insert(0, valores[1])  # Nombre
             self.entradaFechaIn.insert(0, valores[2])
-            self.entradaFechaRe.insert(valores[3])
-            self.entradaFechaEsEnt.insert(0, valores[4])
+            self.entradaFechaRe.insert(0,valores[3])
+            self.entradaSucOri.insert(0, valores[5])
+            self.entradaIdPedido.insert((0, valores[6]))
+
 
 
 
@@ -165,7 +174,8 @@ class gestionDeDatosTicketEncomienda(tk.Tk):
         self.comboEstado.set("")
         self.entradaFechaRe.delete(0, tk.END)
         self.entradaFechaIn.delete(0, tk.END)
-        self.entradaFechaEsEnt.delete(0, tk.END)
+        self.entradaSucOri.delete(0, tk.END)
+        self.entradaIdPedido.delete(0, tk.END)
 
 
 
@@ -181,33 +191,32 @@ class gestionDeDatosTicketEncomienda(tk.Tk):
         estado = self.comboEstado.get()
         fechaIn = self.entradaFechaIn.get()
         fechaRe = self.entradaFechaRe.get()
-        fechaEsEn = self.entradaFechaEsEnt.get()
+        sucOrigin = self.entradaSucOri.get()
+        idPedido = self.entradaIdPedido.get()
 
-        if estado and fechaIn and fechaRe and fechaEsEn:
-            create_ticket_encomienda(estado, a, cargo, username, contrasenia)
-            messagebox.showinfo("Empleado", f"El empleado {nombre} {apellido} se agregó correctamente")
+        if estado and fechaIn and fechaRe and sucOrigin and idPedido:
+            create_ticket_encomienda(estado, sucOrigin, idPedido, fechaRe)
+            messagebox.showinfo("Ticket encomienda", f"Se creó correctamente el ticket")
             self.actualizarTabla()
             self.limpiar_entradas()
         else:
-            messagebox.showerror("Error", "Hubo un problema al agregar empleado")
+            messagebox.showerror("Error", "Hubo un problema al crear ticket de encomienda")
     def actualizarEmpleado(self):
-        from models.Empleado import update_empleado
+        from models.ticketEncomienda import update_ticket_encomienda
         seleccion = self.tabla.focus()  # Obtiene la clave del elemento seleccionado
         if seleccion:
             valores = self.tabla.item(seleccion, "values")
             ide = valores[0]
-            nombre = self.entradaNombre.get()
-            apellido = self.entradaApellido.get()
-            cargo = self.comboCargo.get()
-            username = self.entradaUsername.get()
-            contrasenia = self.entradaContrasenia.get()
-            if nombre and apellido and cargo and username and contrasenia:
-                update_empleado(ide, nombre, apellido, cargo, username, contrasenia)
-                messagebox.showinfo("Empleado", f"Se actualizo los campos del empleado")
+            estado = self.comboEstado.get()
+            fechaRe = self.entradaFechaRe.get()
+
+            if ide and estado and fechaRe:
+                update_ticket_encomienda(ide, estado, fechaRe)
+                messagebox.showinfo("Ticket encomienda", f"Se actualizo los campos de ticket encomienda")
                 self.actualizarTabla()
                 self.limpiar_entradas()
             else:
-                messagebox.showerror("Error", "Hubo un problema al actualizar empleado")
+                messagebox.showerror("Error", "Hubo un problema al actualizar el ticket")
 
 
 
@@ -223,11 +232,11 @@ class gestionDeDatosTicketEncomienda(tk.Tk):
                 delete_empleado(ide)
                 rpta = messagebox.askyesno("Aviso", "¿Esta seguro de continuar?")
                 if rpta:
-                    messagebox.showinfo("Empleado", f"Se elimino los campos del empleado")
+                    messagebox.showinfo("Empleado", f"Se elimino los campos del ticket")
                     self.actualizarTabla()
                     self.limpiar_entradas()
                 else:
-                    messagebox.showerror("Empleado", "Se eliminó los campos del empleado")
+                    return
 
             else:
                 messagebox.showerror("Error", "Hubo un problema al actualizar empleado")
