@@ -63,6 +63,7 @@ class vistaEmpleado(tk.Tk):
         # Aquí podrías llamar a otra Sclase o ventana si es necesario
 
     def cambiar_estado_pedido(self):
+        from vista.gestionDeDatosTicketEncomienda import ca
         print("Función Cambiar Estado Pedido llamada.")
         # Aquí podrías llamar a otra clase o ventana si es necesario
 

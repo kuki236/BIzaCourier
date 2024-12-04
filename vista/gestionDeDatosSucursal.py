@@ -14,11 +14,40 @@ class gestionDeDatosSucursal(tk.Tk):
 
 
     def agregar_widgets(self):
-        # Aqui van los estilos
         estilo = ttk.Style()
+
+        # Establecer un tema base
         estilo.theme_use("clam")
-        # Cambiar el fondo del frame utilizando ttk.Style
+
+        # Estilo del frame del título
         estilo.configure("frame1.TFrame", background="#5286ee")
+        estilo.configure("frame2.TFrame", background="#f5f5f5")
+        estilo.configure("frame3.TFrame", background="#f5f5f5")
+
+        # Estilo para etiquetas
+        estilo.configure("TLabel", font=("Arial", 12), background="#f5f5f5", foreground="#333")
+        estilo.configure("Titulo.TLabel", font=("Arial", 20, "bold"), background="#5286ee", foreground="white")
+        estilo.configure("Subtitulo.TLabel", font=("Arial", 14), background="#5286ee", foreground="white")
+
+        # Estilo para entradas de texto
+        estilo.configure("TEntry", padding=5, relief="flat", font=("Arial", 12))
+
+        # Estilo para botones
+        estilo.configure("TButton", font=("Arial", 12, "bold"), padding=5, background="#5286ee", foreground="white")
+        estilo.map("TButton",
+                   background=[("active", "#4169e1"), ("disabled", "#cccccc")],
+                   foreground=[("active", "white")])
+
+        # Estilo para la tabla
+        estilo.configure("Treeview", font=("Arial", 10), rowheight=25, background="#ffffff", foreground="#333")
+        estilo.configure("Treeview.Heading", font=("Arial", 12, "bold"), background="#5286ee", foreground="white")
+        estilo.map("Treeview",
+                   background=[("selected", "#5286ee")],
+                   foreground=[("selected", "white")])
+
+        # Bordes y márgenes
+        estilo.configure("frame1.TFrame", relief="flat", padding=10)
+        estilo.configure("TEntry", relief="flat", padding=5)
 
 
         # Configurar la ventana (3 filas y 2 columnas)

@@ -9,50 +9,119 @@ class inicio(tk.Tk):
         self.geometry("1000x600")
         self.centrar_ventana()
         self.config(bg="white")
+        self.estilo_moderno()
         self.agregar_widgets()
 
+    def estilo_moderno(self):
+        """Define un estilo moderno para los widgets."""
+        estilo = ttk.Style()
+        estilo.theme_use("clam")
 
+        # Fondo de la ventana principal
+        self.config(bg="#f5f5f5")
+
+        # Estilo para títulos
+        estilo.configure(
+            "Titulo.TLabel",
+            font=("Arial", 24, "bold"),
+            foreground="#333333",
+            background="#f5f5f5",
+        )
+        estilo.configure(
+            "SubTitulo.TLabel",
+            font=("Arial", 16),
+            foreground="#555555",
+            background="#f5f5f5",
+        )
+
+        # Estilo para botones
+        estilo.configure(
+            "Boton.TButton",
+            font=("Arial", 12),
+            foreground="white",
+            background="#0078D7",
+            borderwidth=1,
+            focuscolor="#005A9E",
+        )
+        estilo.map(
+            "Boton.TButton",
+            background=[("active", "#005A9E"), ("disabled", "#cccccc")],
+        )
+
+        # Estilo para etiquetas simples
+        estilo.configure(
+            "Etiqueta.TLabel",
+            font=("Arial", 12),
+            foreground="#333333",
+            background="#f5f5f5",
+        )
     def agregar_widgets(self):
         # Aqui van los estilos
 
 
         # Configuracion de la ventana ( Seran 2 filas y 1 columna )
+        """Agrega widgets a la ventana."""
+        # Configuración de la ventana
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=5)
         self.columnconfigure(0, weight=1)
-        # Aqui van la creacion de los widgets
-        self.Frame1 = ttk.Frame(self)
+
+        # Frame 1
+        self.Frame1 = ttk.Frame(self, style="Titulo.TFrame")
         self.Frame1.grid(row=0, column=0, sticky="nsew")
-        # Configurar el frame1
+
         self.Frame1.rowconfigure(0, weight=1)
-        self.Frame1.rowconfigure(1,weight=1)
+        self.Frame1.rowconfigure(1, weight=1)
         self.Frame1.columnconfigure(0, weight=1)
 
-        # Crear los titulos en el frame1
-        self.lblTitulo = ttk.Label(self.Frame1, text="bizaCourier", anchor="center")
+        # Crear títulos en Frame 1
+        self.lblTitulo = ttk.Label(
+            self.Frame1, text="bizaCourier", anchor="center", style="Titulo.TLabel"
+        )
         self.lblTitulo.grid(row=0, column=0, sticky="nsew")
-        self.lblSubTitulo = ttk.Label(self.Frame1, text="Envios rapidos y seguros", anchor="center")
-        self.lblSubTitulo.grid(row=1,column=0,sticky="nsew")
 
-        # Crear el frame2 ----------------------------
-        self.Frame2 = ttk.Frame(self)
-        self.Frame2.grid(row=1,column=0,sticky="nsew",padx=375, pady=50)
+        self.lblSubTitulo = ttk.Label(
+            self.Frame1,
+            text="Envíos rápidos y seguros",
+            anchor="center",
+            style="SubTitulo.TLabel",
+        )
+        self.lblSubTitulo.grid(row=1, column=0, sticky="nsew")
 
-        # Configurar el frame2 (6 filas y 1 columna)
-        for i in range(0,6):
+        # Frame 2
+        self.Frame2 = ttk.Frame(self, style="Etiqueta.TFrame")
+        self.Frame2.grid(row=1, column=0, sticky="nsew", padx=375, pady=50)
+
+        for i in range(0, 6):
             self.Frame2.rowconfigure(i, weight=1)
-        self.Frame2.columnconfigure(0,weight=1)
+        self.Frame2.columnconfigure(0, weight=1)
 
-        self.lblOpciones = ttk.Label(self.Frame2, text="Opciones")
-        self.lblOpciones.grid(row=0,column=0)
+        self.lblOpciones = ttk.Label(
+            self.Frame2, text="Opciones", anchor="center", style="SubTitulo.TLabel"
+        )
+        self.lblOpciones.grid(row=0, column=0, pady=(0, 10))
 
-        nombre_botones = ["CRUD empleados","CRUD Sucursales", "CRUD Cliente","Asignar Empleado a Sucursal", "Buscar pedido por nombre"]
-        comandos_botones = [self.crudEmpleados, self.crudSucursales, self.crudCliente, self.asignarEmpleado, self.buscarPedido]
+        # Botones
+        nombre_botones = [
+            "CRUD Empleados",
+            "CRUD Sucursales",
+            "CRUD Cliente",
+            "Asignar Empleado a Sucursal",
+            "Buscar Pedido por Nombre",
+        ]
+        comandos_botones = [
+            self.crudEmpleados,
+            self.crudSucursales,
+            self.crudCliente,
+            self.asignarEmpleado,
+            self.buscarPedido,
+        ]
 
-        # Creamos los botones
-        for i, nombre, comando in zip(range(1,6), nombre_botones, comandos_botones):
-            self.boton = ttk.Button(self.Frame2, text=nombre, command=comando)
-            self.boton.grid(row=i, column=0, sticky="nsew")
+        for i, nombre, comando in zip(range(1, 6), nombre_botones, comandos_botones):
+            boton = ttk.Button(
+                self.Frame2, text=nombre, command=comando, style="Boton.TButton"
+            )
+            boton.grid(row=i, column=0, sticky="nsew", pady=5)
 
 
     def centrar_ventana(self):

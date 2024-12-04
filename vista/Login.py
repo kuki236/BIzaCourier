@@ -17,6 +17,21 @@ class Login(tk.Tk):
         estilo = ttk.Style()
         estilo.theme_use("clam")
 
+        # Estilo para los Frames
+        estilo.configure("TFrame", background="#d4f4ff")
+
+        # Estilo para los Labels
+        estilo.configure("TLabel", font=("Arial", 12), background="white", foreground="black")
+
+        # Estilo para las Entry
+        estilo.configure("TEntry", font=("Arial", 12), padding=5)
+
+        # Estilo para los Botones
+        estilo.configure("TButton", font=("Arial", 12, "bold"), background="#d4f4ff", foreground="black")
+        estilo.map("TButton",
+                   background=[("active", "#a3d7ff"), ("pressed", "#8cbce0")],
+                   foreground=[("disabled", "gray")])
+
         # Cambiar el fondo del frame utilizando ttk.Style
         estilo.configure("TFrame", background="white")
 

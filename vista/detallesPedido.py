@@ -48,6 +48,26 @@ class DetallesPedido(tk.Tk):
             messagebox.showerror("Error", f"Error al obtener datos: {e}")
 
     def agregar_widgets(self):
+        # Estilos
+        # Aquí van los estilos -----------------------------------------
+        estilo = ttk.Style()
+        estilo.theme_use("clam")
+
+        # Estilo para los Labels
+        estilo.configure("TLabel", font=("Helvetica", 10), background="white", foreground="black")
+
+        # Estilo para los Labels con títulos (resaltados)
+        estilo.configure("Titulo.TLabel", font=("Helvetica", 10, "bold"), background="white", foreground="black")
+
+        # Estilo para los Labels de encabezado principal
+        estilo.configure("Encabezado.TLabel", font=("Helvetica", 16, "bold"), background="white", foreground="black")
+
+        # Estilo para los Botones
+        estilo.configure("TButton", font=("Helvetica", 12, "bold"), background="#d4f4ff", foreground="black")
+        estilo.map("TButton",
+                   background=[("active", "#a3d7ff"), ("pressed", "#8cbce0")],
+                   foreground=[("disabled", "gray")])
+
         # Título de la ventana
         ttk.Label(self, text=f"Gestión de Encomienda: {self.nombre_pedido}", font=("Helvetica", 16)).grid(row=0, column=0, columnspan=2, pady=10)
 
