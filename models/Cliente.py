@@ -25,8 +25,7 @@ def read_clientes():
         cursor = conn.cursor()
         cursor.execute(query)
         clientes = cursor.fetchall()
-        for cliente in clientes:
-            print(cliente)
+        return clientes
     except Error as e:
         print(f"Error al leer clientes: {e}")
     finally:
