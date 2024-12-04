@@ -6,7 +6,7 @@ class buscarPedido(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Buscar pedido")
-        self.geometry("400x500")
+        self.geometry("600x500")
         self.centrar_ventana()
         self.config(bg="#d4f4ff")
         self.agregar_widgets()
@@ -21,6 +21,7 @@ class buscarPedido(tk.Tk):
         self.rowconfigure(0,weight=2)
         self.rowconfigure(1,weight=5)
         self.rowconfigure(2,weight=1)
+        self.rowconfigure(3, weight=1)
 
         for i in range(0,3):
             self.columnconfigure(i,weight=1)
@@ -53,6 +54,9 @@ class buscarPedido(tk.Tk):
         self.botonBuscar = ttk.Button(self.Frame2, text="Buscar")
         self.botonBuscar.grid(row=2,column=0)
 
+        self.botonChatBot = ttk.Button(self, text="Chatbot", command=self.abrir_chat_bot)
+        self.botonChatBot.grid(row=3,column=0,columnspan=3,sticky="e", padx=10,pady=20)
+
     def centrar_ventana(self):
         self.update_idletasks()
         width = self.winfo_width()
@@ -60,6 +64,9 @@ class buscarPedido(tk.Tk):
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
+
+    def abrir_chat_bot(self):
+        pass
 
 if __name__ == "__main__":
     pedido = buscarPedido()
