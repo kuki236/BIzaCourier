@@ -6,7 +6,7 @@ def autenticar_usuario(username, contrasena):
     try:
         conn = create_connection()
         cursor = conn.cursor(dictionary=True)
-        query = "SELECT * FROM Empleado WHERE username = %s AND contrasena = %s"
+        query = "SELECT * FROM Empleado WHERE username = %s AND contraseña = %s"
         cursor.execute(query, (username, contrasena))
         empleado = cursor.fetchone()
 

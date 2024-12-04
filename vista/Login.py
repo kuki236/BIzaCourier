@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk,messagebox
 
 
 class Login(tk.Tk):
@@ -51,7 +51,7 @@ class Login(tk.Tk):
         self.entradaContrasenia = ttk.Entry(self.Frame1, show="*")
         self.entradaContrasenia.grid(row=4,column=0)
 
-        self.botonIniciar = ttk.Button(self.Frame1, text="Iniciar sesión")
+        self.botonIniciar = ttk.Button(self.Frame1, text="Iniciar sesión", command=self.iniciar)
         self.botonIniciar.grid(row=5,column=0,sticky="nsew", padx=10,pady=10)
 
 
@@ -62,6 +62,32 @@ class Login(tk.Tk):
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"{width}x{height}+{x}+{y}")
+
+    def iniciar(self):
+        from models.Login_Funcion import autenticar_usuario
+        from vista.vistaEmpleado import vistaEmpleado
+        from vista.inicio import inicio
+        nombre = self.entradaUsuario.get()
+        password = self.entradaContrasenia.get()
+
+        if nombre and password:
+            persona = autenticar_usuario(nombre,password)
+            print(persona)
+            if persona["cargo"] == "Empleado":
+                self.destroy()
+                objEmp = vistaEmpleado()
+                objEmp.mainloop()
+            elif persona["cargo"] == "Gerente":
+                self.destroy()
+                objInicio = inicio()
+                objInicio.mainloop()
+            else:
+                messagebox.showerror("Error", "El usuario no existe")
+        else:
+            messagebox.showerror("Error", "Error al iniciar sesion")
+
+
+
 
 
 if __name__ == "__main__":

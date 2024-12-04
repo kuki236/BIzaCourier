@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from vista.detallesPedido import gestionDeDatosCliente
+
 
 class inicio(tk.Tk):
     def __init__(self):
@@ -46,8 +48,8 @@ class inicio(tk.Tk):
         self.lblOpciones = ttk.Label(self.Frame2, text="Opciones")
         self.lblOpciones.grid(row=0,column=0)
 
-        nombre_botones = ["CRUD empleados","CRUD Sucursales", "CRUD Pedido","Asignar Empleado a Sucursal", "Buscar pedido por nombre"]
-        comandos_botones = [self.crudEmpleados, self.crudSucursales, self.crudPedido, self.asignarEmpleado, self.buscarPedido]
+        nombre_botones = ["CRUD empleados","CRUD Sucursales", "CRUD Cliente","Asignar Empleado a Sucursal", "Buscar pedido por nombre"]
+        comandos_botones = [self.crudEmpleados, self.crudSucursales, self.crudCliente, self.asignarEmpleado, self.buscarPedido]
 
         # Creamos los botones
         for i, nombre, comando in zip(range(1,6), nombre_botones, comandos_botones):
@@ -65,15 +67,28 @@ class inicio(tk.Tk):
 
     # Estas son las funciones para las botones al hacer click
     def crudEmpleados(self):
-        pass
+        from vista.gestionDeDatosEmpleado import gestionDeDatosEmpleado
+        self.destroy()
+        gDatos = gestionDeDatosEmpleado()
+        gDatos.mainloop()
+
     def crudSucursales(self):
-        pass
-    def crudPedido(self):
-        pass
+        from vista.gestionDeDatosSucursal import gestionDeDatosSucursal
+        self.destroy()
+        gDatos = gestionDeDatosSucursal()
+        gDatos.mainloop()
+    def crudCliente(self):
+        from vista.gestionDeDatosCliente import gestionDeDatosCliente
+        self.destroy()
+        gDatos = gestionDeDatosCliente()
+        gDatos.mainloop()
     def asignarEmpleado(self):
         pass
     def buscarPedido(self):
-        pass
+        from vista.buscarPedido import buscarPedido
+        self.destroy()
+        gDatos = buscarPedido()
+        gDatos.mainloop()
 
 if __name__ == "__main__":
     iniciarMenu = inicio()

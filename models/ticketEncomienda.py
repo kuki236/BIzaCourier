@@ -133,8 +133,7 @@ def read_ticket_encomienda():
             """
             cursor.execute(query)
             results = cursor.fetchall()
-            for row in results:
-                print(row)
+            return results
     except Error as e:
         print(f"Error al leer de la base de datos: {e}")
     finally:

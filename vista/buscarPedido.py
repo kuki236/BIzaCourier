@@ -51,7 +51,7 @@ class buscarPedido(tk.Tk):
         self.lblCodigoPedido.grid(row=0, column=0)
         self.entradaPedido = ttk.Entry(self.Frame2)
         self.entradaPedido.grid(row=1,column=0)
-        self.botonBuscar = ttk.Button(self.Frame2, text="Buscar")
+        self.botonBuscar = ttk.Button(self.Frame2, text="Buscar", command=self.buscar)
         self.botonBuscar.grid(row=2,column=0)
 
         self.botonChatBot = ttk.Button(self, text="Chatbot", command=self.abrir_chat_bot)
@@ -67,6 +67,11 @@ class buscarPedido(tk.Tk):
 
     def abrir_chat_bot(self):
         pass
+
+    def buscar(self):
+        codPedido = self.entradaPedido.get()
+        if codPedido:
+            pass
 
 if __name__ == "__main__":
     pedido = buscarPedido()
